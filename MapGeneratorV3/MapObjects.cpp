@@ -242,11 +242,62 @@ void Landmass::updateOptionsFromLast(int xPos, int yPos){
     cleanOptions();
 }
 
+int Landmass::textureAdjacent(SDL_Texture *texture, Tile *tile){
+    updateAdjacent(tile);
+    int toCheck = (int)lastAdjacents.size();
+    int landNeighbors =0;
+    for(int i = 0; i < toCheck; ++i){
+        if(lastAdjacents[i]->currentTexture == texture){
+            landNeighbors++;
+        }
+    }
+    return landNeighbors;
+}
+
+int Landmass::textureWithinThree(SDL_Texture *texture, Tile *tile){
+    int count = 0;
+    std::vector<Tile*> justAdjacent;
+    std::vector<Tile*> withinThree;
+    updateAdjacent(tile);
+    int toCheck = (int)lastAdjacents.size();
+    for(int i = 0; i < toCheck; ++i){
+        justAdjacent.push_back(lastAdjacents[i]);
+        updateAdjacent(lastAdjacents[i]);
+        int roundCheck = (int)lastAdjacents.size();
+        for(int n = 0; n < roundCheck; ++n){
+            for(int j = 0; j < withinThree.size(); ++j){
+                if(lastAdjacents[i] != withinThree[j]){
+                    withinThree.push_back(lastAdjacents[i]);
+                }
+            }
+        }
+    }
+    for(int k = 0; k < withinThree.size(); ++k){
+        if(withinThree[k]->currentTexture == texture){
+            count++;
+        }
+    }
+    return count;
+}
+
+void Landmass::updateLandWeights(){
+    for(int i = 0; i < optionTiles.size(); ++i){
+        int numAdjacent = textureAdjacent(grass, optionTiles[i]);
+        int numInThree = textureWithinThree(grass, optionTiles[i]);
+        numAdjacent += textureAdjacent(sand, optionTiles[i]);
+        numInThree += textureWithinThree(sand, optionTiles[i]);
+        numAdjacent *= factorAdjacent;
+        numInThree *= factorWithin3;
+        int weight = numInThree + numAdjacent;
+        optionTiles[i]->landWeight = weight;
+    }
+}
+
 Tile* Landmass::chooseOptionUnewighted(){
     int indexChoice;
     int ceiling = (int)optionTiles.size();
     Tile* chosenTile;
-    std::uniform_int_distribution<int> Range(0, (ceiling - 1));
+    std::uniform_int_distribution<int> Range(recencyBias, (ceiling - 1));
     //printf("Cieling : %d\n", ceiling);
     indexChoice = Range(generator);
     chosenTile = optionTiles[indexChoice];
