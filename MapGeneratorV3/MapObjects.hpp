@@ -16,11 +16,14 @@
 #include <random>
 #include <stdio.h>
 
+const int width = 80;
+const int height = 43;
+
 class Tile {
 public:
     Tile();
     ~Tile();
-    void init(int x, int y, int defaultTexture);
+    void init(int xSet, int ySet, int defaultTexture);
     int x;
     int y;
     int textureIndex;
@@ -29,10 +32,38 @@ public:
     int landWeight;
 };
 //declaring a global 2d vector of tiles for the map
-std::vector<std::vector<Tile>> workingTiles;
+
 
 class Map {
+public:
+    Map();
+    ~Map();
+    SDL_Texture * grass;
+    SDL_Texture * sand;
+    SDL_Texture * water;
+    void loadAllTextures(SDL_Renderer *renderer);
+    void initTileVector();
+    void initToOcean();
+    void renderMap(SDL_Renderer *renderer);
+};
+
+class Landmass {
+public:
+    Landmass();
+    ~Landmass();
+    std::vector<std::unique_ptr<Tile>> waterTiles;
+    std::vector<std::unique_ptr<Tile>> grassTiles;
+    std::vector<std::unique_ptr<Tile>> sandTiles;
+    std::vector<std::unique_ptr<Tile>> optionTiles;
+    std::vector<std::unique_ptr<Tile>> lastAdjacents;
+    void initAllOcean();
+    void setTile(int xPos, int yPos);
+    void updateAdjacent(int xPos, int yPos);
+    void updateOptionsFromLast(int xPos, int yPos);
+    void updateLandWeight(std::unique_ptr<Tile>);
     
 };
+
+
 
 #endif /* MapObjects_hpp */

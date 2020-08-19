@@ -25,9 +25,9 @@ public:
     //manages memory
     void clean();
     bool running() {return isRunning;}
+    Map memberMap;
     
 private:
-    int _redlevel = 255;
     bool isRunning;
     SDL_Window *window;
     SDL_Renderer *renderer;

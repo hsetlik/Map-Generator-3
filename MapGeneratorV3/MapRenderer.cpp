@@ -34,6 +34,8 @@ void Display::init(const char *title, int xpos, int ypos, int width, int height,
         }
         isRunning = true;
     }
+    memberMap.loadAllTextures(renderer);
+    memberMap.initTileVector();
 }
 
 void Display::handleEvents()
@@ -45,15 +47,14 @@ void Display::handleEvents()
             isRunning = false;
             break;
         case SDL_MOUSEBUTTONDOWN:{
-            
             //workingMap.printTextures();
     }
     }
 }
 
-
 void Display::render(){
     SDL_RenderClear(renderer);
+    memberMap.renderMap(renderer);
     SDL_RenderPresent(renderer);
 }
 
