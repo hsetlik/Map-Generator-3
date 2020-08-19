@@ -62,9 +62,10 @@ public:
     void clicked();
     void cleanOptions();
     void updateLandWeights();
-    int numOptions;
-    int numMembers;
+    void createLandmassUnweighted(int size); //note: one land tile must be placed before this function can be called
+    Tile* chooseOptionUnewighted();
 private:
+    std::vector<Tile*> landTiles;
     std::vector<Tile*> waterTiles;
     std::vector<Tile*> grassTiles;
     std::vector<Tile*> sandTiles;

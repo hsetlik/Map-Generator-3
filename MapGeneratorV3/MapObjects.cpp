@@ -8,6 +8,9 @@
 
 #include "MapObjects.hpp"
 
+std::random_device device;
+std::mt19937 generator(device());
+
 Tile::Tile(){
 }
 Tile::~Tile(){
@@ -29,6 +32,7 @@ std::vector<std::vector<Tile>> visibleTiles;
 SDL_Texture * grass;
 SDL_Texture * sand;
 SDL_Texture * water;
+SDL_Texture * option;
 
 
 
@@ -46,6 +50,10 @@ void Map::loadAllTextures(SDL_Renderer *renderer){
     SDL_Surface * tempSurface3 = IMG_Load("/Users/SFMAdmin/Desktop/Programming/SDL_projects/MapGeneratorV3/MapGeneratorV3/PNG assets/waterBase.png");
     water = SDL_CreateTextureFromSurface(renderer, tempSurface3);
     SDL_FreeSurface(tempSurface3);
+    
+    SDL_Surface * tempSurface4 = IMG_Load("/Users/SFMAdmin/Desktop/Programming/SDL_projects/MapGeneratorV3/MapGeneratorV3/PNG assets/waterBaseOption.png");
+    option = SDL_CreateTextureFromSurface(renderer, tempSurface4);
+    SDL_FreeSurface(tempSurface4);
 }
 
 void Map::initTileVector(){
@@ -110,8 +118,7 @@ Landmass::~Landmass(){
 }
 void Landmass::initMap(Map chosenMap){
     map = chosenMap;
-    numMembers = 0;
-    numOptions = 0;
+    
     map.initToOcean();
 }
 
@@ -131,12 +138,14 @@ void Landmass::setTile(int xPos, int yPos, SDL_Texture* texture){ //coordinate v
     if(texture == grass){
         printf("Grass at: %d, %d\n", xPos, yPos);
     }
+    
 }
 
 void Landmass::clicked(){
     Tile* clickedTile = map.tileClicked();
     setTile(clickedTile, grass);
-    
+    updateOptionsFromLast(clickedTile);
+    createLandmassUnweighted(10);
 }
 
 void Landmass:: setTile(Tile* tile, SDL_Texture* texture){ //pointer version
@@ -182,10 +191,9 @@ void Landmass::updateAdjacent(int xPos, int yPos){
     }
 }
 void Landmass::cleanOptions(){
-    for(int i = 0; i < numOptions; ++i){
+    for(int i = 0; i < optionTiles.size(); ++i){
         if(optionTiles[i]->isLand){
             optionTiles.erase(optionTiles.begin() + i);
-            --numOptions;
         }
     }
 }
@@ -205,6 +213,10 @@ void Landmass::updateOptionsFromLast(Tile *tile){
         }
         if(allowed){
             optionTiles.push_back(lastAdjacents[i]);
+            //this just highlights the tiles being considered as options at a given point
+            if(optionTiles.back()->currentTexture == water){
+            optionTiles.back()->currentTexture = option;
+            }
         }
     }
     cleanOptions();
@@ -230,3 +242,21 @@ void Landmass::updateOptionsFromLast(int xPos, int yPos){
     cleanOptions();
 }
 
+Tile* Landmass::chooseOptionUnewighted(){
+    int indexChoice;
+    int ceiling = (int)optionTiles.size();
+    Tile* chosenTile;
+    std::uniform_int_distribution<int> Range(0, (ceiling - 1));
+    //printf("Cieling : %d\n", ceiling);
+    indexChoice = Range(generator);
+    chosenTile = optionTiles[indexChoice];
+    return chosenTile;
+}
+
+void Landmass::createLandmassUnweighted(int size){
+    for(int i = 0; i < size; ++i){
+        Tile * choiceTile = chooseOptionUnewighted();
+        setTile(choiceTile, grass);
+        updateOptionsFromLast(choiceTile);
+    }
+}
