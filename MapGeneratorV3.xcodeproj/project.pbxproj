@@ -50,6 +50,7 @@
 		C0F95B2124EDA85F0035C1DD /* MapObjects.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MapObjects.hpp; sourceTree = "<group>"; };
 		C0F95B2324EDA8DE0035C1DD /* MapRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MapRenderer.cpp; sourceTree = "<group>"; };
 		C0F95B2424EDA8DE0035C1DD /* MapRenderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MapRenderer.hpp; sourceTree = "<group>"; };
+		C0F95B2624EDCF3C0035C1DD /* PNG assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "PNG assets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,12 +86,13 @@
 		C0F95B0F24EDA7D00035C1DD /* MapGeneratorV3 */ = {
 			isa = PBXGroup;
 			children = (
+				C0F95B2624EDCF3C0035C1DD /* PNG assets */,
 				C0F95B1F24EDA8050035C1DD /* MapGeneratorV3.entitlements */,
 				C0F95B1024EDA7D00035C1DD /* main.cpp */,
-				C0F95B2024EDA85F0035C1DD /* MapObjects.cpp */,
-				C0F95B2124EDA85F0035C1DD /* MapObjects.hpp */,
 				C0F95B2324EDA8DE0035C1DD /* MapRenderer.cpp */,
 				C0F95B2424EDA8DE0035C1DD /* MapRenderer.hpp */,
+				C0F95B2024EDA85F0035C1DD /* MapObjects.cpp */,
+				C0F95B2124EDA85F0035C1DD /* MapObjects.hpp */,
 			);
 			path = MapGeneratorV3;
 			sourceTree = "<group>";

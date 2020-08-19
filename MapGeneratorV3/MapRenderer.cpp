@@ -7,6 +7,7 @@
 //
 
 #include "MapRenderer.hpp"
+Landmass mapLand;
 Display::Display() {
     }
 Display::~Display(){
@@ -34,8 +35,10 @@ void Display::init(const char *title, int xpos, int ypos, int width, int height,
         }
         isRunning = true;
     }
+    
     memberMap.loadAllTextures(renderer);
     memberMap.initTileVector();
+    mapLand.initMap(memberMap);
 }
 
 void Display::handleEvents()
@@ -47,6 +50,7 @@ void Display::handleEvents()
             isRunning = false;
             break;
         case SDL_MOUSEBUTTONDOWN:{
+            mapLand.clicked();
             //workingMap.printTextures();
     }
     }
@@ -67,5 +71,5 @@ void Display::clean()
     SDL_DestroyRenderer(renderer);
     IMG_Quit();
     SDL_Quit();
-    printf("Game Cleaned\n");
+    printf("App Cleaned\n");
 }

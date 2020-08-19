@@ -19,49 +19,57 @@
 const int width = 80;
 const int height = 43;
 
+
 class Tile {
 public:
     Tile();
     ~Tile();
-    void init(int xSet, int ySet, int defaultTexture);
+    void init(int xSet, int ySet);
     int x;
     int y;
-    int textureIndex;
     SDL_Texture * currentTexture;
+    void setTexture(SDL_Texture * newTexture);
     bool isLand;
     int landWeight;
 };
 //declaring a global 2d vector of tiles for the map
-
-
 class Map {
 public:
     Map();
     ~Map();
-    SDL_Texture * grass;
-    SDL_Texture * sand;
-    SDL_Texture * water;
     void loadAllTextures(SDL_Renderer *renderer);
+    void updateAllTextures();
     void initTileVector();
     void initToOcean();
     void renderMap(SDL_Renderer *renderer);
+    Tile* tileClicked();
 };
 
 class Landmass {
 public:
     Landmass();
     ~Landmass();
-    std::vector<std::unique_ptr<Tile>> waterTiles;
-    std::vector<std::unique_ptr<Tile>> grassTiles;
-    std::vector<std::unique_ptr<Tile>> sandTiles;
-    std::vector<std::unique_ptr<Tile>> optionTiles;
-    std::vector<std::unique_ptr<Tile>> lastAdjacents;
-    void initAllOcean();
-    void setTile(int xPos, int yPos);
+    void initMap(Map chosenMap);
+    Map map;
+    void setupAllOcean();
+    //tiles can be set& accessed either by coordinates or by tile pointer, functions with the same name do the same thing
+    void setTile(Tile* tile, SDL_Texture* texture);
+    void setTile(int xPos, int yPos, SDL_Texture* texture);
     void updateAdjacent(int xPos, int yPos);
+    void updateAdjacent(Tile* centerTile);
     void updateOptionsFromLast(int xPos, int yPos);
-    void updateLandWeight(std::unique_ptr<Tile>);
-    
+    void updateOptionsFromLast(Tile* tile);
+    void clicked();
+    void cleanOptions();
+    void updateLandWeights();
+    int numOptions;
+    int numMembers;
+private:
+    std::vector<Tile*> waterTiles;
+    std::vector<Tile*> grassTiles;
+    std::vector<Tile*> sandTiles;
+    std::vector<Tile*> optionTiles;
+    std::vector<Tile*> lastAdjacents;
 };
 
 
