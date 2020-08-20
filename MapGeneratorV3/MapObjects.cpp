@@ -73,8 +73,6 @@ void Map::initToOcean(){
     printf("map initializing to ocean. . . ");
     for(int x = 0; x < width; ++x){
         for(int y = 0; y < height; ++y){
-            //zero is the index representing the ocean texture
-            
             visibleTiles[x][y].setTexture(water);
         }
     }
@@ -265,7 +263,7 @@ int Landmass::textureAdjacent(SDL_Texture *texture, Tile *tile){
             landNeighbors++;
         }
     }
-    //printf("%d adjacent land tiles\n", landNeighbors);
+    printf("%d adjacent land tiles\n", landNeighbors);
     return landNeighbors;
 }
 
@@ -282,7 +280,7 @@ int Landmass::textureWithinThree(SDL_Texture *texture, Tile *tile){
             }
         }
     }
-    //printf("%d land tiles within three\n", landInThree);
+    printf("%d land tiles within three\n", landInThree);
     return landInThree;
 }
 
@@ -290,11 +288,11 @@ void Landmass::updateLandWeights(){
     for(int i = 0; i < optionTiles.size(); ++i){
         int numAdjacent = textureAdjacent(grass, optionTiles[i]);
         int numInThree = textureWithinThree(grass, optionTiles[i]);
-        numAdjacent += textureAdjacent(sand, optionTiles[i]);
-        numInThree += textureWithinThree(sand, optionTiles[i]);
-        numAdjacent *= factorAdjacent;
-        numInThree *= factorWithin3;
-        int weight = numInThree + numAdjacent;
+        //numAdjacent += textureAdjacent(sand, optionTiles[i]);
+        //numInThree += textureWithinThree(sand, optionTiles[i]);
+        double adjacentWeight = pow(factorAdjacent, (numAdjacent + 1));
+        double inThreeWeight = pow(factorWithin3, (numInThree + 1));
+        int weight = adjacentWeight + inThreeWeight;
         optionTiles[i]->landWeight = weight;
         //printf("Option %d, %d weight is %d\n", optionTiles[i]->x, optionTiles[i]->y, weight);
     }

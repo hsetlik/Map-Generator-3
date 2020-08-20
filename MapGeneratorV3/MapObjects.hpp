@@ -20,7 +20,7 @@ const int width = 80;
 const int height = 43;
 
 const int factorAdjacent = 16;
-const int factorWithin3 = 4;
+const int factorWithin3 = 7;
 const int recencyBias = 0;
 const int noiseAmount = 12;
 
