@@ -34,8 +34,13 @@ SDL_Texture * grass;
 SDL_Texture * sand;
 SDL_Texture * water;
 SDL_Texture * option;
+SDL_Texture * topBanner;
+SDL_Texture * plusButton;
+SDL_Texture * minusButton;
+SDL_Texture * textField;
+SDL_Texture * placeButton;
 
-
+int sizeSetting;
 
 Map::Map(){
 }
@@ -55,6 +60,26 @@ void Map::loadAllTextures(SDL_Renderer *renderer){
     SDL_Surface * tempSurface4 = IMG_Load("/Users/SFMAdmin/Desktop/Programming/SDL_projects/MapGeneratorV3/MapGeneratorV3/PNG assets/waterBaseOption.png");
     option = SDL_CreateTextureFromSurface(renderer, tempSurface4);
     SDL_FreeSurface(tempSurface4);
+    
+    SDL_Surface * tempSurface5 = IMG_Load("/Users/SFMAdmin/Desktop/Programming/SDL_projects/MapGeneratorV3/MapGeneratorV3/PNG assets/topBanner.png");
+    topBanner = SDL_CreateTextureFromSurface(renderer, tempSurface5);
+    SDL_FreeSurface(tempSurface5);
+    
+    SDL_Surface * tempSurface6 = IMG_Load("/Users/SFMAdmin/Desktop/Programming/SDL_projects/MapGeneratorV3/MapGeneratorV3/PNG assets/plusButton.png");
+       plusButton = SDL_CreateTextureFromSurface(renderer, tempSurface6);
+       SDL_FreeSurface(tempSurface6);
+    
+    SDL_Surface * tempSurface7 = IMG_Load("/Users/SFMAdmin/Desktop/Programming/SDL_projects/MapGeneratorV3/MapGeneratorV3/PNG assets/minusButton.png");
+    minusButton = SDL_CreateTextureFromSurface(renderer, tempSurface7);
+    SDL_FreeSurface(tempSurface7);
+    
+    SDL_Surface * tempSurface8 = IMG_Load("/Users/SFMAdmin/Desktop/Programming/SDL_projects/MapGeneratorV3/MapGeneratorV3/PNG assets/textField.png");
+    textField = SDL_CreateTextureFromSurface(renderer, tempSurface8);
+    SDL_FreeSurface(tempSurface8);
+    
+    SDL_Surface * tempSurface9 = IMG_Load("/Users/SFMAdmin/Desktop/Programming/SDL_projects/MapGeneratorV3/MapGeneratorV3/PNG assets/placeButton.png");
+    placeButton = SDL_CreateTextureFromSurface(renderer, tempSurface9);
+    SDL_FreeSurface(tempSurface9);
 }
 
 void Map::initTileVector(){
@@ -146,7 +171,7 @@ void Landmass::clickedWeighted(){
     setTile(clickedTile, grass);
     updateOptionsFromLast(clickedTile);
     updateLandWeights();
-    createLandmassWeighted(25);
+    createLandmassWeighted(sizeSetting);
 }
 
 void Landmass:: setTile(Tile* tile, SDL_Texture* texture){ //pointer version
@@ -361,6 +386,63 @@ void Landmass::createLandmassWeighted(int size){
     setTile(choiceTile, grass);
     updateOptionsFromLast(choiceTile);
     updateLandWeights();
-    randomizeWeights((n / 3) * noiseAmount);
+    randomizeWeights(n * noiseAmount);
+    }
+}
+
+Menu::Menu(){
+    
+}
+Menu::~Menu(){
+    
+}
+void Menu::init(){
+    placeCursor = false;
+}
+
+void Menu::render(SDL_Renderer * renderer){
+    TTF_Font* Sans = TTF_OpenFont("/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages/matplotlib/mpl-data/fonts/ttf/DejaVuSans.ttf", 24);
+    SDL_Color Black = {0, 0, 0};
+    std::string size = std::to_string(sizeSetting);
+    SDL_Surface * textSurface = TTF_RenderText_Solid(Sans, size.c_str(), Black);
+    SDL_Texture * sizeTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    SDL_RenderCopy(renderer, topBanner, NULL, &bannerRect);
+    SDL_RenderCopy(renderer, minusButton, NULL, &minusRect);
+    SDL_RenderCopy(renderer, plusButton, NULL, &plusRect);
+    SDL_RenderCopy(renderer, textField, NULL, &textRect);
+    SDL_RenderCopy(renderer, sizeTexture, NULL, &textRect);
+    SDL_RenderCopy(renderer, placeButton, NULL, &placeRect);
+    
+}
+
+bool Menu:: listenToButton(SDL_Rect *button){
+    SDL_Point mousePos;
+    SDL_GetMouseState(&mousePos.x, &mousePos.y);
+    if(SDL_PointInRect(&mousePos, button)){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void Menu::plusClicked(){
+    ++sizeSetting;
+}
+void Menu::minusClicked(){
+    --sizeSetting;
+}
+void Menu:: placeClicked(){
+    placeCursor = true;
+}
+
+void Menu::checkAllClicks(){
+    if(listenToButton(&plusRect)){
+        plusClicked();
+    }
+    if(listenToButton(&minusRect)){
+        minusClicked();
+    }
+    if(listenToButton(&placeRect)){
+        placeClicked();
     }
 }

@@ -8,6 +8,7 @@
 
 #include "MapRenderer.hpp"
 Landmass mapLand;
+Menu topMenu;
 Display::Display() {
     }
 Display::~Display(){
@@ -20,6 +21,7 @@ void Display::init(const char *title, int xpos, int ypos, int width, int height,
     }
     if(SDL_Init(SDL_INIT_EVERYTHING) == 0){
         IMG_Init(IMG_INIT_PNG);
+        TTF_Init();
         printf("SDL_Img initialized\n");
         //verifies that SDL started up correctly
         printf("SDL Initialized\n");
@@ -35,7 +37,7 @@ void Display::init(const char *title, int xpos, int ypos, int width, int height,
         }
         isRunning = true;
     }
-    
+    topMenu.init();
     memberMap.loadAllTextures(renderer);
     memberMap.initTileVector();
     mapLand.initMap(memberMap);
@@ -50,8 +52,13 @@ void Display::handleEvents()
             isRunning = false;
             break;
         case SDL_MOUSEBUTTONDOWN:{
-            mapLand.clickedWeighted();
-            //workingMap.printTextures();
+            if(topMenu.placeCursor == false){
+                topMenu.checkAllClicks();
+            } else {
+                mapLand.clickedWeighted();
+                topMenu.placeCursor = false;
+            }
+            
     }
     }
 }
@@ -59,6 +66,7 @@ void Display::handleEvents()
 void Display::render(){
     SDL_RenderClear(renderer);
     memberMap.renderMap(renderer);
+    topMenu.render(renderer);
     SDL_RenderPresent(renderer);
 }
 
@@ -70,6 +78,7 @@ void Display::clean()
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     IMG_Quit();
+    TTF_Quit();
     SDL_Quit();
     printf("App Cleaned\n");
 }

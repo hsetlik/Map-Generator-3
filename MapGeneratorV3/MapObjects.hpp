@@ -10,6 +10,7 @@
 #define MapObjects_hpp
 #include "/Library/Frameworks/SDL2.framework/Versions/A/Headers/SDL.h"
 #include "/Library/Frameworks/SDL2_image.framework/Headers/SDL_image.h"
+#include "/Library/Frameworks/SDL2_ttf.framework/Versions/A/Headers/SDL_ttf.h"
 #include <cmath>
 #include <vector>
 #include <ctime>
@@ -82,6 +83,25 @@ private:
     std::vector<Tile*> sandTiles;
     std::vector<Tile*> optionTiles;
     std::vector<Tile*> lastAdjacents;
+};
+
+class Menu {
+public:
+    Menu();
+    ~Menu();
+    bool placeCursor;
+    void init();
+    bool listenToButton(SDL_Rect * button);
+    void plusClicked();
+    void minusClicked();
+    void placeClicked();
+    void checkAllClicks();
+    void render(SDL_Renderer * renderer);
+    SDL_Rect bannerRect = {0, 0, 1200, 85};
+    SDL_Rect minusRect = {425, 19, 46, 46};
+    SDL_Rect plusRect = {588, 19, 46, 46};
+    SDL_Rect textRect = {471, 19, 117, 46};
+    SDL_Rect placeRect = {710, 19, 127, 46};
 };
 
 

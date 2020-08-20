@@ -14,6 +14,8 @@
 		C0F95B1E24EDA7F70035C1DD /* SDL2_image.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0F95B1C24EDA7F70035C1DD /* SDL2_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C0F95B2224EDA85F0035C1DD /* MapObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0F95B2024EDA85F0035C1DD /* MapObjects.cpp */; };
 		C0F95B2524EDA8DE0035C1DD /* MapRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0F95B2324EDA8DE0035C1DD /* MapRenderer.cpp */; };
+		C0F95B2824EED1350035C1DD /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0F95B2724EED1350035C1DD /* SDL2_ttf.framework */; };
+		C0F95B2924EED1350035C1DD /* SDL2_ttf.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0F95B2724EED1350035C1DD /* SDL2_ttf.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,6 +35,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				C0F95B1A24EDA7E70035C1DD /* SDL2.framework in Embed Frameworks */,
+				C0F95B2924EED1350035C1DD /* SDL2_ttf.framework in Embed Frameworks */,
 				C0F95B1E24EDA7F70035C1DD /* SDL2_image.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -51,6 +54,7 @@
 		C0F95B2324EDA8DE0035C1DD /* MapRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MapRenderer.cpp; sourceTree = "<group>"; };
 		C0F95B2424EDA8DE0035C1DD /* MapRenderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MapRenderer.hpp; sourceTree = "<group>"; };
 		C0F95B2624EDCF3C0035C1DD /* PNG assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "PNG assets"; sourceTree = "<group>"; };
+		C0F95B2724EED1350035C1DD /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = ../../../../../../Library/Frameworks/SDL2_ttf.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +63,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0F95B1924EDA7E70035C1DD /* SDL2.framework in Frameworks */,
+				C0F95B2824EED1350035C1DD /* SDL2_ttf.framework in Frameworks */,
 				C0F95B1D24EDA7F70035C1DD /* SDL2_image.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -100,6 +105,7 @@
 		C0F95B1724EDA7E60035C1DD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C0F95B2724EED1350035C1DD /* SDL2_ttf.framework */,
 				C0F95B1C24EDA7F70035C1DD /* SDL2_image.framework */,
 				C0F95B1824EDA7E70035C1DD /* SDL2.framework */,
 			);
