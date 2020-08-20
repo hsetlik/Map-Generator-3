@@ -11,6 +11,7 @@
 std::random_device device;
 std::mt19937 generator(device());
 
+
 Tile::Tile(){
 }
 Tile::~Tile(){
@@ -118,7 +119,7 @@ Landmass::~Landmass(){
 }
 void Landmass::initMap(Map chosenMap){
     map = chosenMap;
-    
+    firstPlaced = false;
     map.initToOcean();
 }
 
@@ -132,14 +133,7 @@ void Landmass::setupAllOcean(){
     }
 }
 
-void Landmass::setTile(int xPos, int yPos, SDL_Texture* texture){ //coordinate version
-    visibleTiles[xPos][yPos].setTexture(texture);
-    visibleTiles[xPos][yPos].isLand = true;
-    if(texture == grass){
-        printf("Grass at: %d, %d\n", xPos, yPos);
-    }
-    
-}
+
 
 void Landmass::clicked(){
     Tile* clickedTile = map.tileClicked();
@@ -148,10 +142,30 @@ void Landmass::clicked(){
     createLandmassUnweighted(10);
 }
 
+
+void Landmass::clickedWeighted(){
+    Tile* clickedTile = map.tileClicked();
+    setTile(clickedTile, grass);
+    updateOptionsFromLast(clickedTile);
+    updateLandWeights();
+    createLandmassWeighted(10);
+}
+
 void Landmass:: setTile(Tile* tile, SDL_Texture* texture){ //pointer version
     int x = tile->x;
     int y = tile->y;
     visibleTiles[x][y].setTexture(texture);
+    visibleTiles[x][y].isLand = true;
+    std::uniform_int_distribution<> offsetRange(0, 3);
+    int randomValue = offsetRange(generator);
+    if(firstPlaced == false){
+        std::uniform_int_distribution<> indexRange(0, 3);
+        updateAdjacent(tile);
+        int randomIndex = indexRange(generator);
+        lastAdjacents[randomIndex]->landWeight += randomValue;
+        firstPlaced = true;
+    }
+    
 }
 void Landmass::updateAdjacent(Tile *centerTile){
     //gets rid of the 4 pointers stored in the vector after its last use
@@ -251,6 +265,7 @@ int Landmass::textureAdjacent(SDL_Texture *texture, Tile *tile){
             landNeighbors++;
         }
     }
+    //printf("%d adjacent land tiles\n", landNeighbors);
     return landNeighbors;
 }
 
@@ -290,6 +305,7 @@ void Landmass::updateLandWeights(){
         numInThree *= factorWithin3;
         int weight = numInThree + numAdjacent;
         optionTiles[i]->landWeight = weight;
+        printf("Option %d, %d weight is %d\n", optionTiles[i]->x, optionTiles[i]->y, weight);
     }
 }
 
@@ -309,5 +325,44 @@ void Landmass::createLandmassUnweighted(int size){
         Tile * choiceTile = chooseOptionUnewighted();
         setTile(choiceTile, grass);
         updateOptionsFromLast(choiceTile);
+    }
+}
+
+void Landmass::randomizeWeights(int maxOffset){
+    std::uniform_int_distribution<> offsetRange(0, maxOffset);
+    for(int i = 0; i < optionTiles.size(); ++i){
+        int randOffset = offsetRange(generator);
+        optionTiles[i]->landWeight += randOffset;
+    }
+}
+
+Tile* Landmass::chooseOptionWeighted(){
+    Tile* tileChoice;
+    int weightSum = 0;
+    for(int i =0; i < optionTiles.size(); ++i){
+        int tempWeight = optionTiles[i]->landWeight;
+        weightSum+= tempWeight;
+    }
+    printf("sum of weights: %d\n", weightSum);
+    tileChoice = nullptr;
+    std::uniform_int_distribution<int> weightedRange(recencyBias, (weightSum - 1));
+    int random = weightedRange(generator);
+    for(int i = 0; i < optionTiles.size(); ++i){
+        if(random < optionTiles[i]->landWeight){
+            tileChoice = optionTiles[i];
+        } else {
+            random -= optionTiles[i]->landWeight;
+        }
+    }
+    return tileChoice;
+}
+void Landmass::createLandmassWeighted(int size){
+    for(int i = 0; i < size; ++i){
+        Tile* choiceTile = chooseOptionWeighted();
+        printf("Placing tile at %d, %d\n", choiceTile-> x , choiceTile-> y);
+        setTile(choiceTile, grass);
+        updateOptionsFromLast(choiceTile);
+        updateLandWeights();
+        randomizeWeights(i * 2);
     }
 }

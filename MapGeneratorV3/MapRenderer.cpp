@@ -50,7 +50,7 @@ void Display::handleEvents()
             isRunning = false;
             break;
         case SDL_MOUSEBUTTONDOWN:{
-            mapLand.clicked();
+            mapLand.clickedWeighted();
             //workingMap.printTextures();
     }
     }

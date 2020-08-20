@@ -19,8 +19,8 @@
 const int width = 80;
 const int height = 43;
 
-const int factorAdjacent = 8;
-const int factorWithin3 = 3;
+const int factorAdjacent = 4;
+const int factorWithin3 = 1;
 const int recencyBias = 0;
 
 class Tile {
@@ -63,8 +63,11 @@ public:
     void updateOptionsFromLast(int xPos, int yPos);
     void updateOptionsFromLast(Tile* tile);
     void clicked();
+    void clickedWeighted();
     void cleanOptions();
     void updateLandWeights();
+    void randomizeWeights(int maxOffset);
+    bool firstPlaced;
     int textureAdjacent(SDL_Texture *texture, Tile* tile);
     int textureWithinThree(SDL_Texture *texture, Tile* tile);
     void createLandmassUnweighted(int size); //note: one land tile must be placed before this function can be called
