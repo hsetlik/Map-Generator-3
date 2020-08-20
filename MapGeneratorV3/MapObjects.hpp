@@ -19,9 +19,10 @@
 const int width = 80;
 const int height = 43;
 
-const int factorAdjacent = 4;
-const int factorWithin3 = 1;
+const int factorAdjacent = 16;
+const int factorWithin3 = 4;
 const int recencyBias = 0;
+const int noiseAmount = 12;
 
 class Tile {
 public:
@@ -72,7 +73,7 @@ public:
     int textureWithinThree(SDL_Texture *texture, Tile* tile);
     void createLandmassUnweighted(int size); //note: one land tile must be placed before this function can be called
     void createLandmassWeighted(int size); //note: one land tile must be placed before this function can be called
-    Tile* chooseOptionUnewighted();
+    Tile* chooseOptionUnweighted();
     Tile* chooseOptionWeighted();
 private:
     std::vector<Tile*> landTiles;

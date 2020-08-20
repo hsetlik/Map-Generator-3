@@ -148,7 +148,7 @@ void Landmass::clickedWeighted(){
     setTile(clickedTile, grass);
     updateOptionsFromLast(clickedTile);
     updateLandWeights();
-    createLandmassWeighted(10);
+    createLandmassWeighted(25);
 }
 
 void Landmass:: setTile(Tile* tile, SDL_Texture* texture){ //pointer version
@@ -270,29 +270,20 @@ int Landmass::textureAdjacent(SDL_Texture *texture, Tile *tile){
 }
 
 int Landmass::textureWithinThree(SDL_Texture *texture, Tile *tile){
-    int count = 0;
-    std::vector<Tile*> justAdjacent;
-    std::vector<Tile*> withinThree;
+    int landInThree = 0;
     updateAdjacent(tile);
-    int toCheck = (int)lastAdjacents.size();
-    for(int i = 0; i < toCheck; ++i){
-        justAdjacent.push_back(lastAdjacents[i]);
-        updateAdjacent(lastAdjacents[i]);
-        int roundCheck = (int)lastAdjacents.size();
-        for(int n = 0; n < roundCheck; ++n){
-            for(int j = 0; j < withinThree.size(); ++j){
-                if(lastAdjacents[i] != withinThree[j]){
-                    withinThree.push_back(lastAdjacents[i]);
-                }
+    int rounds = (int)lastAdjacents.size();
+    for(int n = 0; n < rounds; ++n){
+        updateAdjacent(lastAdjacents[n]);
+        int toCheck = (int)lastAdjacents.size();
+        for(int i = 0; i < toCheck; ++i){
+            if(lastAdjacents[i]->currentTexture == texture){
+               landInThree++;
             }
         }
     }
-    for(int k = 0; k < withinThree.size(); ++k){
-        if(withinThree[k]->currentTexture == texture){
-            count++;
-        }
-    }
-    return count;
+    //printf("%d land tiles within three\n", landInThree);
+    return landInThree;
 }
 
 void Landmass::updateLandWeights(){
@@ -305,11 +296,11 @@ void Landmass::updateLandWeights(){
         numInThree *= factorWithin3;
         int weight = numInThree + numAdjacent;
         optionTiles[i]->landWeight = weight;
-        printf("Option %d, %d weight is %d\n", optionTiles[i]->x, optionTiles[i]->y, weight);
+        //printf("Option %d, %d weight is %d\n", optionTiles[i]->x, optionTiles[i]->y, weight);
     }
 }
 
-Tile* Landmass::chooseOptionUnewighted(){
+Tile* Landmass::chooseOptionUnweighted(){
     int indexChoice;
     int ceiling = (int)optionTiles.size();
     Tile* chosenTile;
@@ -322,7 +313,7 @@ Tile* Landmass::chooseOptionUnewighted(){
 
 void Landmass::createLandmassUnweighted(int size){
     for(int i = 0; i < size; ++i){
-        Tile * choiceTile = chooseOptionUnewighted();
+        Tile * choiceTile = chooseOptionUnweighted();
         setTile(choiceTile, grass);
         updateOptionsFromLast(choiceTile);
     }
@@ -345,8 +336,9 @@ Tile* Landmass::chooseOptionWeighted(){
     }
     printf("sum of weights: %d\n", weightSum);
     tileChoice = nullptr;
-    std::uniform_int_distribution<int> weightedRange(recencyBias, (weightSum - 1));
+    std::uniform_int_distribution<int> weightedRange(recencyBias, weightSum);
     int random = weightedRange(generator);
+    printf("Starting random number: %d\n", random);
     for(int i = 0; i < optionTiles.size(); ++i){
         if(random < optionTiles[i]->landWeight){
             tileChoice = optionTiles[i];
@@ -357,12 +349,20 @@ Tile* Landmass::chooseOptionWeighted(){
     return tileChoice;
 }
 void Landmass::createLandmassWeighted(int size){
-    for(int i = 0; i < size; ++i){
-        Tile* choiceTile = chooseOptionWeighted();
-        printf("Placing tile at %d, %d\n", choiceTile-> x , choiceTile-> y);
+    for(int i = 0; i < 5; ++i){
+        Tile * choiceTile = chooseOptionUnweighted();
         setTile(choiceTile, grass);
         updateOptionsFromLast(choiceTile);
-        updateLandWeights();
-        randomizeWeights(i * 2);
+    }
+    updateLandWeights();
+    randomizeWeights(noiseAmount);
+    for(int n = 0; n < (size - 5); ++n){
+    Tile* choiceTile = chooseOptionWeighted();
+    printf("Choice weight: %d\n", choiceTile->landWeight);
+    printf("Placing tile at %d, %d\n", choiceTile-> x , choiceTile-> y);
+    setTile(choiceTile, grass);
+    updateOptionsFromLast(choiceTile);
+    updateLandWeights();
+    randomizeWeights((n / 3) * noiseAmount);
     }
 }
